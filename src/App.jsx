@@ -1,8 +1,15 @@
-
-import React, { useRef } from 'react';
-import { ToastContainer, toast, Slide } from 'react-toastify';
+import React, { useRef, useState } from 'react';
+import { ToastContainer, toast, Slide, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+
+// Create a custom transition with 0 duration for instant open/close
+const Instant = cssTransition({
+  enter: "instant-toast-enter",
+  exit: "instant-toast-exit",
+  duration: 1, // Use 1ms to avoid edge cases
+  appendPosition: false
+});
 
 // Reusable scrollable content component
 const ScrollableContent = ({ title, date }) => (
@@ -18,82 +25,128 @@ const ScrollableContent = ({ title, date }) => (
   </div>
 );
 
-const PopupContent = ({ closeToast, data }) => (
-  <>
-    <div className="popup-overlay" onClick={closeToast}></div>
-    <div className="popup-content">
-      <h3>Popup Notification {data}</h3>
-      <p>This mimics a modal with a backdrop.</p>
-      <p>Background interactions should be blocked.</p>
-      <button className="control-btn" onClick={closeToast} style={{ marginTop: '10px' }}>
-        Dismiss
-      </button>
-    </div>
-  </>
-);
+const PopupContent = ({ closeToast, data, order, onMount, onUnmount }) => {
+  React.useEffect(() => {
+    onMount();
+    return () => {
+      onUnmount();
+    };
+  }, []);
+
+  return (
+    <>
+      {/* Overlay removed to use global shared backdrop */}
+      <div className="popup-content">
+        <h3>Popup Notification {data}</h3>
+        <p>This mimics a modal with a backdrop.</p>
+        <p>Background interactions should be blocked.</p>
+        <button
+          className="control-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            closeToast();
+          }}
+          style={{ marginTop: '10px' }}
+        >
+          Dismiss
+        </button>
+      </div>
+    </>
+  );
+};
 
 function App() {
   // Store toast IDs to handle "Clear All" for specific groups
   const leftToastIds = useRef(new Set());
   const bottomToastIds = useRef(new Set());
 
+  // Counter for popup order (ID generation)
+  const popupCount = useRef(0);
+  // State for active popup count to manage global backdrop
+  const [activePopupCount, setActivePopupCount] = useState(0);
+
   // Helper to remove ID from set when toast is closed strictly
-  const handleClose = (id, setRef) => {
-    setRef.current.delete(id);
-  };
+  // const handleClose = (id, setRef) => {
+  //   setRef.current.delete(id);
+  // };
 
   // Scenario 1: Top-Left, stacking top down (standard)
   const notifyLeft = () => {
-    const id = toast.info(
+    const customId = `left-${Date.now()}-${Math.random()}`;
+    toast.info(
       <ScrollableContent title="Left Toast" date={new Date().toLocaleTimeString()} />,
       {
+        toastId: customId,
         containerId: 'left',
         position: "top-left",
         autoClose: false, // User requested no auto-close
-        onClose: () => handleClose(id, leftToastIds) // Cleanup ID on close
+        // onClose: () => handleClose(customId, leftToastIds) // Temporarily disabled to debug
       }
     );
-    leftToastIds.current.add(id);
+    leftToastIds.current.add(customId);
+    console.log('Added Left Toast:', customId, 'Set size:', leftToastIds.current.size);
   };
 
   const clearLeft = () => {
+    console.log('Clearing Left Toasts. Count:', leftToastIds.current.size);
     leftToastIds.current.forEach(id => toast.dismiss(id));
     leftToastIds.current.clear();
   };
 
   // Scenario 2: Bottom, Left-to-Right
   const notifyBottom = () => {
-    const id = toast.success(
+    const customId = `bottom-${Date.now()}-${Math.random()}`;
+    toast.success(
       <ScrollableContent title="Bottom Toast" date={new Date().toLocaleTimeString()} />,
       {
+        toastId: customId,
         containerId: 'bottom',
         position: "bottom-center",
         autoClose: false, // User requested no auto-close
         transition: Slide,
-        onClose: () => handleClose(id, bottomToastIds)
+        // onClose: () => handleClose(customId, bottomToastIds)
       }
     );
-    bottomToastIds.current.add(id);
+    bottomToastIds.current.add(customId);
+    console.log('Added Bottom Toast:', customId, 'Set size:', bottomToastIds.current.size);
   };
 
   const clearBottom = () => {
+    console.log('Clearing Bottom Toasts. Count:', bottomToastIds.current.size);
     bottomToastIds.current.forEach(id => toast.dismiss(id));
     bottomToastIds.current.clear();
   };
 
   // Scenario 3: Popup with Backdrop
   const notifyPopup = () => {
-    toast(<PopupContent data={new Date().toLocaleTimeString()} />, {
-      containerId: 'popup',
-      position: "center",
-      className: 'popup-toast-wrapper',
-      bodyClassName: "popup-toast-body",
-      closeButton: false,
-      closeOnClick: false,
-      draggable: false,
-      autoClose: false,
-      icon: false
-    });
+    popupCount.current += 1;
+    const order = popupCount.current;
+    const popupId = `popup-${order}`;
+
+    // Remove manual increment here
+    // setActivePopupCount(prev => prev + 1);
+
+    toast(
+      <PopupContent
+        data={`Order #${order} (${new Date().toLocaleTimeString()})`}
+        order={order}
+        onMount={() => setActivePopupCount(prev => prev + 1)}
+        onUnmount={() => setActivePopupCount(prev => Math.max(0, prev - 1))}
+      />,
+      {
+        toastId: popupId,
+        containerId: 'popup',
+        position: "center",
+        className: 'popup-toast-wrapper',
+        bodyClassName: "popup-toast-body",
+        closeButton: false,
+        closeOnClick: false,
+        draggable: false,
+        autoClose: false,
+        icon: false,
+        // Using newestOnTop={true} here combined with the container logic to ensure numbering order
+      }
+    );
   };
 
   // Generate a grid of background buttons
@@ -101,6 +154,9 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Global Shared Backdrop */}
+      {activePopupCount > 0 && <div className="global-popup-backdrop" />}
+
       {/* Mock background to test interactions */}
       <div className="mock-grid">
         {bgButtons.map(i => (
@@ -172,8 +228,9 @@ function App() {
         enableMultiContainer
         position="center"
         className="toast-container-popup"
-        limit={3}
         draggable={false}
+        newestOnTop={true}
+        transition={Instant}
       />
     </div>
   );
