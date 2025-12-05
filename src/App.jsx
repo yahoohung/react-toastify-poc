@@ -152,6 +152,7 @@ function App() {
         enableMultiContainer
         position="top-left"
         style={{ width: "320px" }} // Slightly wider to accommodate content
+        draggable={false}
       />
 
       {/* 2. Bottom Side (Horizontal) */}
@@ -161,6 +162,7 @@ function App() {
         position="bottom-center"
         className="toast-container-bottom"
         newestOnTop={false}
+        draggable={false}
       />
 
       {/* 3. Popup (Modal) */}
@@ -170,6 +172,7 @@ function App() {
         position="center"
         className="toast-container-popup"
         limit={3}
+        draggable={false}
       />
     </div>
   );
