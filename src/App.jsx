@@ -151,6 +151,7 @@ function App() {
         containerId="left"
         enableMultiContainer
         position="top-left"
+        className="toast-container-left"
         style={{ width: "320px" }} // Slightly wider to accommodate content
         draggable={false}
       />

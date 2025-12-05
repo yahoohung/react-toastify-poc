@@ -96,6 +96,21 @@ body,
   padding-right: 5px;
 }
 
+/* Left Container: Scrollable Vertical Stack */
+.toast-container-left {
+  max-height: 90vh;
+  /* Limit height */
+  overflow-y: auto !important;
+  /* Enable scroll */
+  pointer-events: auto !important;
+  /* Allow interaction with scrollbar */
+  padding: 10px !important;
+
+  /* Scrollbar styling (optional but helpful) */
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
 /* Scenario 2: Bottom, Left to Right (Horizontal) */
 .toast-container-bottom {
   top: auto !important;
@@ -103,17 +118,27 @@ body,
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: auto !important;
+  max-width: 95vw;
+  /* Limit width */
+  overflow-x: auto !important;
+  /* Enable scroll */
+  pointer-events: auto !important;
   display: flex !important;
   flex-direction: row !important;
   align-items: flex-end !important;
-  padding: 0 !important;
+  padding: 10px !important;
   gap: 10px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
 }
 
 /* To allow horizontal stacking, we need to ensure the items don't stretch */
 .toast-container-bottom .Toastify__toast {
   margin: 0 !important;
   width: 300px;
+  flex-shrink: 0;
+  /* Prevent shrinking */
 }
 
 /* Scenario 3: Popup with Backdrop */
