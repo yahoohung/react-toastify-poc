@@ -1,0 +1,180 @@
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.app-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mock Grid for testing clicks */
+.mock-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 0;
+}
+
+.mock-btn {
+  padding: 15px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mock-btn:active {
+  background-color: #bbb;
+  transform: scale(0.95);
+}
+
+.mock-btn:hover {
+  background-color: #d0d0d0;
+}
+
+/* Controls */
+.controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.control-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.control-btn:hover {
+  background-color: #0056b3;
+}
+
+.control-btn.secondary {
+  background-color: #6c757d;
+}
+
+.control-btn.secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Custom Toast Configurations */
+
+/* Scrollable Content Style */
+.scrollable-toast-content {
+  height: 150px;
+  /* Taller height */
+  overflow-y: auto;
+  /* Scrollable */
+  padding-right: 5px;
+}
+
+/* Scenario 2: Bottom, Left to Right (Horizontal) */
+.toast-container-bottom {
+  top: auto !important;
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  padding: 0 !important;
+  gap: 10px;
+}
+
+/* To allow horizontal stacking, we need to ensure the items don't stretch */
+.toast-container-bottom .Toastify__toast {
+  margin: 0 !important;
+  width: 300px;
+}
+
+/* Scenario 3: Popup with Backdrop */
+.toast-container-popup {
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-toast-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: auto !important;
+  cursor: default;
+}
+
+.popup-toast-wrapper .Toastify__toast-body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.popup-content {
+  position: relative;
+  z-index: 2;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  min-width: 300px;
+  text-align: center;
+}
