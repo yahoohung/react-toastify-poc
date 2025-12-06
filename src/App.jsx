@@ -150,7 +150,7 @@ function App() {
   };
 
   // Generate a grid of background buttons
-  const bgButtons = Array.from({ length: 100 }, (_, i) => i + 1);
+  const bgButtons = Array.from({ length: 400 }, (_, i) => i + 1);
 
   return (
     <div className="app-container">
