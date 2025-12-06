@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { Analytics } from '@vercel/analytics/next';
 import { ToastContainer, toast, Slide, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
