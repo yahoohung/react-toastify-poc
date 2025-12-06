@@ -233,6 +233,8 @@ function App() {
         newestOnTop={true}
         transition={Instant}
       />
+
+      <Analytics />
     </div>
   );
 }
